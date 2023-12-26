@@ -1,7 +1,8 @@
+// EmployeeController.java
 package com.example.employeerest.controller;
 
 import com.example.employeerest.dto.EmployeeDTO;
-import com.example.employeerest.entity.Employee;
+import com.example.employeerest.response.Response;
 import com.example.employeerest.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,34 +14,69 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
-    
+
     private final EmployeeService employeeService;
-    
+
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
-    
+
     @PostMapping
-    public ResponseEntity<EmployeeDTO> create(@Validated @RequestBody EmployeeDTO employeeDTO) {
+    public ResponseEntity<Response> create(@Validated @RequestBody EmployeeDTO employeeDTO) {
         EmployeeDTO createdEmployee = employeeService.create(employeeDTO);
-        return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
+        Response response = new Response();
+        if (createdEmployee != null) {
+            response.setCode(HttpStatus.OK);
+            response.setStatus("Success");
+            response.setMessage("Employee Created Successfully");
+            response.setData(List.of(createdEmployee));
+            return ResponseEntity.ok(response);
+        } else {
+            response.setCode(HttpStatus.NOT_FOUND);
+            response.setStatus("failed");
+            response.setMessage("Employee not created");
+            return ResponseEntity.status(response.getCode()).body(response);
+        }
     }
-    
+
     @GetMapping("/all")
-    public ResponseEntity<List<EmployeeDTO>> getAll() {
+    public ResponseEntity<Response> getAll() {
         List<EmployeeDTO> employees = employeeService.getAll();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+        Response response = new Response();
+        response.setCode(HttpStatus.OK);
+        response.setStatus("Success");
+        response.setMessage("Retrieved all employees successfully");
+        response.setData(List.of(employees));
+        return ResponseEntity.ok(response);
     }
-    
+
     @PatchMapping("/{id}")
-    public ResponseEntity<Employee> update(@PathVariable Long id, @RequestBody Employee updatedEmployee) {
-        Employee updated = employeeService.update(updatedEmployee, id);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+    public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployeeDTO) {
+        EmployeeDTO updatedEmployee = employeeService.update(updatedEmployeeDTO, id);
+
+        if (updatedEmployee != null) {
+            Response response = new Response();
+            response.setCode(HttpStatus.OK);
+            response.setStatus("Success");
+            response.setMessage("Employee updated successfully");
+            response.setData(List.of(updatedEmployee));
+            return ResponseEntity.ok(response);
+        } else {
+            Response response = new Response();
+            response.setCode(HttpStatus.NOT_FOUND);
+            response.setStatus("failed");
+            response.setMessage("Employee not found or not updated");
+            return ResponseEntity.status(response.getCode()).body(response);
+        }
     }
-    
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Response> delete(@PathVariable Long id) {
         employeeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        Response response = new Response();
+        response.setCode(HttpStatus.NO_CONTENT);
+        response.setStatus("Success");
+        response.setMessage("Employee deleted successfully");
+        return ResponseEntity.status(response.getCode()).body(response);
     }
 }

@@ -12,12 +12,12 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int eno;
+    private String eno;
     private String ename;
     private double salary;
     private Date dob;
     private Date doj;
     private String manager;
     private String dept;
-    
+
 }
