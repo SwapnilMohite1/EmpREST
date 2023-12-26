@@ -1,6 +1,6 @@
 package com.example.employeerest.service;
+
 import com.example.employeerest.dto.EmployeeDTO;
-import com.example.employeerest.entity.Employee;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
