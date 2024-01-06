@@ -15,7 +15,9 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
+    private static final String SUCCESS_STATUS = "Success";
     private final EmployeeService employeeService;
+
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
@@ -27,7 +29,7 @@ public class EmployeeController {
         Response response = new Response();
         if (createdEmployee != null) {
             response.setCode(HttpStatus.OK);
-            response.setStatus("Success");
+            response.setStatus(SUCCESS_STATUS);
             response.setMessage("Employee Created Successfully");
             response.setData(List.of(createdEmployee));
             return ResponseEntity.ok(response);
@@ -44,7 +46,7 @@ public class EmployeeController {
         List<EmployeeDTO> employees = employeeService.getAll();
         Response response = new Response();
         response.setCode(HttpStatus.OK);
-        response.setStatus("Success");
+        response.setStatus(SUCCESS_STATUS);
         response.setMessage("Retrieved all employees successfully");
         response.setData(List.of(employees));
         return ResponseEntity.ok(response);
@@ -54,15 +56,14 @@ public class EmployeeController {
     public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody EmployeeDTO updatedEmployeeDTO) {
         EmployeeDTO updatedEmployee = employeeService.update(updatedEmployeeDTO, id);
 
+        Response response = new Response();
         if (updatedEmployee != null) {
-            Response response = new Response();
             response.setCode(HttpStatus.OK);
-            response.setStatus("Success");
+            response.setStatus(SUCCESS_STATUS);
             response.setMessage("Employee updated successfully");
             response.setData(List.of(updatedEmployee));
             return ResponseEntity.ok(response);
         } else {
-            Response response = new Response();
             response.setCode(HttpStatus.NOT_FOUND);
             response.setStatus("failed");
             response.setMessage("Employee not found or not updated");
@@ -75,7 +76,7 @@ public class EmployeeController {
         employeeService.delete(id);
         Response response = new Response();
         response.setCode(HttpStatus.NO_CONTENT);
-        response.setStatus("Success");
+        response.setStatus(SUCCESS_STATUS);
         response.setMessage("Employee deleted successfully");
         return ResponseEntity.status(response.getCode()).body(response);
     }

@@ -3,6 +3,7 @@ package com.example.employeerest.service.serviceimpl;
 
 import com.example.employeerest.dto.EmployeeDTO;
 import com.example.employeerest.entity.Employee;
+import com.example.employeerest.exception.EmployeeAlreadyExistsException;
 import com.example.employeerest.repository.EmployeeRepository;
 import com.example.employeerest.service.EmployeeService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -37,14 +37,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             Employee savedEmployee = employeeRepository.save(employee);
             return modelMapper.map(savedEmployee, EmployeeDTO.class);
         } else {
-            throw new RuntimeException("Employee with the given employee number already exists.");
+            throw new EmployeeAlreadyExistsException("Employee with the given employee number already exists.");
         }
     }
 
     @Override
     public List<EmployeeDTO> getAll() {
         List<Employee> employees = employeeRepository.findAll();
-        return employees.stream().map(employee -> modelMapper.map(employee, EmployeeDTO.class)).collect(Collectors.toList());
+        return employees.stream().map(employee -> modelMapper.map(employee, EmployeeDTO.class)).toList();
     }
 
     @Override
